@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { downloadFile } = require('./downloadFile');
+const { downloadFileAxios } = require('./downloadFileAxios');
 
 async function launch() {
     const browser = await puppeteer.launch({
@@ -16,7 +17,7 @@ async function launch() {
             '--no-zygote',
         ],
         // slowMo: 250, // slow down by 250ms
-        headless: true,
+        headless: false,
     });
 
     const page = await browser.newPage();
@@ -24,12 +25,14 @@ async function launch() {
 
     await page.goto('https://www.themorgan.org/collection/sacramentary/76962');
 
-    const urls = await page.$$eval('.menu li a', imgs => imgs.map(({ href }) => href).filter(url => /\/\d+$/.test(url)));
+    const urls = await page
+            .$$eval('.menu li a', imgs => imgs.map(({ href }) => href)
+            .filter(url => /\/\d+$/.test(url)));
 
     for (const url of urls) {
         await page.goto(url);
         const href = await page.$eval('.field-item span a', img => img.href);
-        downloadFile(href);
+        downloadFileAxios(href);
     }
     browser.close();
 
