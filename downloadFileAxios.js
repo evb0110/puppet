@@ -7,7 +7,8 @@ module.exports.downloadFileAxios = downloadFileAxios;
 async function downloadFileAxios(url) {
     console.log(url);
     const path = Path.basename(url);
-    const writer = Fs.createWriteStream(path)
+    const outputPath = Path.join(__dirname, 'dnl', path);
+    const writer = Fs.createWriteStream(outputPath);
 
     const response = await Axios({
         url,
